@@ -6,6 +6,7 @@ const App = () => {
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
   const [successMessage, setSuccessMessage] = useState(null);
+  const [errorMessage, setErrorMessage] = useState(null);
 
   useEffect(() => {
     personService
@@ -45,7 +46,16 @@ const App = () => {
             }, 5000);
           })
           .catch((error) => {
-            console.error('Error updating person:', error);
+            if (error.response && error.response.status === 404) {
+              setErrorMessage(
+                `Information of ${newName} has already been removed from the server.`
+              );
+              setTimeout(() => {
+                setErrorMessage(null);
+              }, 5000);
+            } else {
+              console.error('Error updating person:', error);
+            }
           });
       }
     } else {
@@ -72,6 +82,11 @@ const App = () => {
       {successMessage && (
         <div style={{ color: 'green', marginBottom: '10px' }}>
           {successMessage}
+        </div>
+      )}
+      {errorMessage && (
+        <div style={{ color: 'red', marginBottom: '10px' }}>
+          {errorMessage}
         </div>
       )}
       <form onSubmit={addPerson}>
