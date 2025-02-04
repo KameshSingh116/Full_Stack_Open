@@ -1,3 +1,4 @@
+// App.jsx
 import React, { useState, useEffect } from 'react';
 import personService from './services/person';
 
@@ -32,6 +33,20 @@ const App = () => {
       });
   };
 
+  const handleDelete = (id) => {
+    const person = persons.find((p) => p.id === id);
+    if (person && window.confirm(`Delete ${person.name}?`)) {
+      personService
+        .remove(id)
+        .then(() => {
+          setPersons(persons.filter((p) => p.id !== id));
+        })
+        .catch((error) => {
+          console.error('Error deleting person:', error);
+        });
+    }
+  };
+
   return (
     <div>
       <h2>Phonebook</h2>
@@ -50,7 +65,8 @@ const App = () => {
       <ul>
         {persons.map((person) => (
           <li key={person.id}>
-            {person.name} {person.number}
+            {person.name} {person.number}{' '}
+            <button onClick={() => handleDelete(person.id)}>delete</button>
           </li>
         ))}
       </ul>
