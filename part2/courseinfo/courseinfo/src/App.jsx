@@ -25,8 +25,10 @@ const App = () => {
 };
 
 const Course = ({ course }) => {
-  // Calculate the total number of exercises
-  const totalExercises = course.parts.reduce((sum, part) => sum + part.exercises, 0);
+  const totalExercises = course.parts.reduce((sum, part) => {
+    console.log('Accumulator (sum):', sum, 'Current part:', part);
+    return sum + part.exercises;
+  }, 0);
 
   return (
     <div>
