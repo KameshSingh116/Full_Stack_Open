@@ -1,4 +1,3 @@
-// App.jsx
 import React, { useState, useEffect } from 'react';
 import personService from './services/person';
 
@@ -6,6 +5,7 @@ const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newNumber, setNewNumber] = useState('');
+  const [successMessage, setSuccessMessage] = useState(null);
 
   useEffect(() => {
     personService
@@ -39,6 +39,10 @@ const App = () => {
             );
             setNewName('');
             setNewNumber('');
+            setSuccessMessage(`Updated ${newName}'s number successfully!`);
+            setTimeout(() => {
+              setSuccessMessage(null);
+            }, 5000);
           })
           .catch((error) => {
             console.error('Error updating person:', error);
@@ -51,6 +55,10 @@ const App = () => {
           setPersons(persons.concat(response.data));
           setNewName('');
           setNewNumber('');
+          setSuccessMessage(`Added ${newName} successfully!`);
+          setTimeout(() => {
+            setSuccessMessage(null);
+          }, 5000);
         })
         .catch((error) => {
           console.error('Error adding person:', error);
@@ -61,12 +69,25 @@ const App = () => {
   return (
     <div>
       <h2>Phonebook</h2>
+      {successMessage && (
+        <div style={{ color: 'green', marginBottom: '10px' }}>
+          {successMessage}
+        </div>
+      )}
       <form onSubmit={addPerson}>
         <div>
-          name: <input value={newName} onChange={(e) => setNewName(e.target.value)} />
+          name:{' '}
+          <input
+            value={newName}
+            onChange={(e) => setNewName(e.target.value)}
+          />
         </div>
         <div>
-          number: <input value={newNumber} onChange={(e) => setNewNumber(e.target.value)} />
+          number:{' '}
+          <input
+            value={newNumber}
+            onChange={(e) => setNewNumber(e.target.value)}
+          />
         </div>
         <div>
           <button type="submit">add</button>
