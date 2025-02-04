@@ -1,12 +1,13 @@
-// src/CountryInfo.jsx
+// src/App.jsx
 import React, { useState } from 'react';
 import axios from 'axios';
 
-const CountryInfo = () => {
+const App = () => {
   const [countries, setCountries] = useState([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [message, setMessage] = useState('');
   const [selectedCountry, setSelectedCountry] = useState(null);
+  const [weather, setWeather] = useState(null);
 
   const handleSearch = async (event) => {
     event.preventDefault();
@@ -35,8 +36,21 @@ const CountryInfo = () => {
     }
   };
 
-  const handleShowDetails = (country) => {
+  const handleShowDetails = async (country) => {
     setSelectedCountry(country);
+    setWeather(null); // Reset weather data
+
+    try {
+      const capital = country.capital[0];
+      const apiKey = process.env.REACT_APP_OPENWEATHER_API_KEY;
+      const weatherResponse = await axios.get(
+        `https://api.openweathermap.org/data/2.5/weather?q=${capital}&appid=${apiKey}&units=metric`
+      );
+      setWeather(weatherResponse.data);
+    } catch (error) {
+      console.error('Error fetching weather data:', error);
+      setWeather(null);
+    }
   };
 
   return (
@@ -80,26 +94,19 @@ const CountryInfo = () => {
           </ul>
         </div>
       )}
-      {selectedCountry && (
+      {selectedCountry && weather && (
         <div>
-          <h3>{selectedCountry.name}</h3>
-          <p>Capital: {selectedCountry.capital}</p>
-          <p>Area: {selectedCountry.area} km²</p>
+          <h3>Weather in {selectedCountry.capital[0]}</h3>
+          <p>Temperature: {weather.main.temp}°C</p>
+          <p>Weather: {weather.weather[0].description}</p>
           <img
-            src={selectedCountry.flags[0]}
-            alt={`Flag of ${selectedCountry.name}`}
-            width="100"
+            src={`https://openweathermap.org/img/wn/${weather.weather[0].icon}.png`}
+            alt={weather.weather[0].description}
           />
-          <h4>Languages:</h4>
-          <ul>
-            {selectedCountry.languages.map((language) => (
-              <li key={language.name}>{language.name}</li>
-            ))}
-          </ul>
         </div>
       )}
     </div>
   );
 };
 
-export default CountryInfo;
+export default App;
