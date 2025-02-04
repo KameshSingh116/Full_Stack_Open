@@ -5,8 +5,8 @@ const baseUrl = 'http://localhost:3001/persons';
 
 // ... other functions ...
 
-const remove = (id) => {
-  return axios.delete(`${baseUrl}/${id}`);
+const update = (id, updatedPerson) => {
+  return axios.put(`${baseUrl}/${id}`, updatedPerson);
 };
 
 export default { getAll, create, update, remove };

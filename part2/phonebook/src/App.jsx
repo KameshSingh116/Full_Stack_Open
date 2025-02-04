@@ -21,28 +21,39 @@ const App = () => {
   const addPerson = (event) => {
     event.preventDefault();
     const personObject = { name: newName, number: newNumber };
-    personService
-      .create(personObject)
-      .then((response) => {
-        setPersons(persons.concat(response.data));
-        setNewName('');
-        setNewNumber('');
-      })
-      .catch((error) => {
-        console.error('Error adding person:', error);
-      });
-  };
+    const existingPerson = persons.find((person) => person.name === newName);
 
-  const handleDelete = (id) => {
-    const person = persons.find((p) => p.id === id);
-    if (person && window.confirm(`Delete ${person.name}?`)) {
+    if (existingPerson) {
+      if (
+        window.confirm(
+          `${newName} is already in the phonebook. Do you want to update their number?`
+        )
+      ) {
+        personService
+          .update(existingPerson.id, personObject)
+          .then((response) => {
+            setPersons(
+              persons.map((person) =>
+                person.id !== existingPerson.id ? person : response.data
+              )
+            );
+            setNewName('');
+            setNewNumber('');
+          })
+          .catch((error) => {
+            console.error('Error updating person:', error);
+          });
+      }
+    } else {
       personService
-        .remove(id)
-        .then(() => {
-          setPersons(persons.filter((p) => p.id !== id));
+        .create(personObject)
+        .then((response) => {
+          setPersons(persons.concat(response.data));
+          setNewName('');
+          setNewNumber('');
         })
         .catch((error) => {
-          console.error('Error deleting person:', error);
+          console.error('Error adding person:', error);
         });
     }
   };
@@ -65,8 +76,7 @@ const App = () => {
       <ul>
         {persons.map((person) => (
           <li key={person.id}>
-            {person.name} {person.number}{' '}
-            <button onClick={() => handleDelete(person.id)}>delete</button>
+            {person.name} {person.number}
           </li>
         ))}
       </ul>
