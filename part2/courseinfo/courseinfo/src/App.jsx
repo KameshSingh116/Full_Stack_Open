@@ -25,10 +25,16 @@ const App = () => {
 };
 
 const Course = ({ course }) => {
+  // Calculate the total number of exercises
+  const totalExercises = course.parts.reduce((sum, part) => sum + part.exercises, 0);
+
   return (
     <div>
       <Header course={course} />
       <Content parts={course.parts} />
+      <p>
+        <strong>Total number of exercises: {totalExercises}</strong>
+      </p>
     </div>
   );
 };
